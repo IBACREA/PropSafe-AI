@@ -61,71 +61,51 @@ El **volumen masivo**, la **heterogeneidad** y las **posibles inconsistencias** 
 
 - [Características](#características)
 - [Arquitectura](#arquitectura)
-- [Requisitos Previos](#requisitos-previos)
 - [Instalación](#instalación)
-- [Guía de Uso](#guía-de-uso)
-- [API Endpoints](#api-endpoints)
+- [ETL y Feature Engineering](#etl-y-feature-engineering)
 - [Entrenamiento del Modelo](#entrenamiento-del-modelo)
-- [Despliegue](#despliegue)
-- [Expansión Futura](#expansión-futura)
-- [Contribuir](#contribuir)
+- [Despliegue en AWS](#despliegue-en-aws)
+- [Estado del Proyecto](#estado-del-proyecto)
 
 ## 🚀 Características
 
-### 📊 Dashboard de Monitoreo (OE4)
-- ✅ **Indicadores clave de riesgo (KPIs)** en tiempo real
-  - Total de transacciones procesadas (34M+)
-  - Tasa de anomalías detectadas
-  - Alertas de fraude activas
-  - Score de calidad de datos
-- ✅ **Alertas críticas recientes** con severidad y geolocalización
-- ✅ **Distribución de anomalías** por tipo (valores atípicos, duplicidades, errores)
-- ✅ **Top municipios de riesgo** con tendencias
-- ✅ **Filtros temporales** (24h, 7d, 30d, 90d, 1y)
+### 📊 ETL Pipeline (OE1)
+- ✅ **Procesamiento masivo**: 30.9M registros SNR/IGAC
+- ✅ **5.7M registros ML-ready** (18.5% después de filtros de calidad)
+- ✅ **Business rules**: Validación por contexto según código de naturaleza jurídica
+- ✅ **Composite keys**: Identificación única de transacciones
+- ✅ **Detección de anomalías**: Actividad excesiva y discrepancias geográficas
+- ✅ **Optimizado para RAM limitada**: Procesamiento in-place sin copias
 
 ### 🤖 Machine Learning (OE2)
 - ✅ **Ensemble de modelos**: Isolation Forest + Local Outlier Factor
-- ✅ **Feature engineering avanzado**: 34+ features derivadas de datos transaccionales
+- ✅ **Feature engineering avanzado**: 39 features derivadas de datos transaccionales
+- ✅ **Entrenado con 5.7M registros** reales de transacciones inmobiliarias
 - ✅ **Detección multi-nivel**: Normal (<0.4), Sospechoso (0.4-0.7), Alto Riesgo (>0.7)
-- ✅ **Explicabilidad**: Features contribuyentes y recomendaciones de acción
-- ✅ **Pipeline reproducible**: Entrenamiento automatizado con scikit-learn
-- ✅ **Escalabilidad**: Procesamiento en chunks para 34M+ registros
+- ✅ **Pipeline reproducible**: Scripts automatizados para entrenamiento
+- ✅ **Optimizado para CPU**: Compatible con instancias t3.small
 
-### 🔍 Detección de Patrones de Fraude (OE3)
-- ✅ **Valores atípicos**: Detección de precios anormalmente altos/bajos
-- ✅ **Duplicidades sospechosas**: Identificación de matrículas inmobiliarias duplicadas
-- ✅ **Errores de anotación**: Validación de campos obligatorios y formatos
-- ✅ **Inconsistencias temporales**: Análisis de secuencias de transacciones
-- ✅ **Análisis geoespacial**: Comparación con promedios municipales/departamentales
+### 🔍 Infraestructura y Deployment (OE6)
+- ✅ **Terraform**: Scripts para aprovisionamiento de EC2 en AWS
+- ✅ **Docker Compose**: Configuración para producción optimizada
+- ✅ **PostgreSQL**: Schema completo y scripts de carga de datos
+- ✅ **Deployment automatizado**: Scripts bash/PowerShell para despliegue
+- ✅ **Documentación completa**: Guías de deployment y arquitectura
 
-### 🌐 Backend (FastAPI + Python) (OE1)
-- ✅ **Integración y estandarización** de registros inmobiliarios
-- ✅ API REST con documentación automática (Swagger/ReDoc)
-- ✅ Análisis individual y por lotes (CSV/Parquet)
-- ✅ Endpoints geoespaciales para visualización
-- ✅ Sistema de chat con RAG (Retrieval Augmented Generation)
-- ✅ Logging estructurado con correlación de requests
-- ✅ Validación robusta con Pydantic
+### 🌐 Backend API (FastAPI + Python)
+- 🔄 **En desarrollo**: Estructura base implementada
+- 🔄 Endpoints para análisis de transacciones
+- 🔄 Integración con modelos ML
+- 🔄 Documentación automática (Swagger/ReDoc)
 
-### 🗺️ Frontend (React + Leaflet)
-- ✅ **Mapa interactivo** con visualización de 10 ciudades principales
-- ✅ **Dashboard completo** con KPIs y alertas
-- ✅ **Analizador individual** con formulario de transacciones
-- ✅ **Análisis por lotes** (carga de archivos CSV/Parquet)
-- ✅ **Chat inteligente** con asistente IA
-- ✅ **Diseño responsive** con TailwindCSS
+### 🗺️ Frontend (React + Vite)
+- 🔄 **En desarrollo**: Componentes base creados
+- 🔄 Dashboard, Mapa, Analizador
+- 🔄 Integración con API backend
 
-### 📚 Servicios RAG
-- ✅ Embeddings multilenguaje (español) con Sentence Transformers
-- ✅ Vector store con ChromaDB para búsqueda semántica
-- ✅ Pipeline RAG con OpenAI GPT para respuestas contextuales
-- ✅ Fallback inteligente sin API key
-
-### 🏗️ Infraestructura
-- ✅ Docker Compose para desarrollo y producción
-- ✅ Dockerfiles optimizados multi-stage
-- ✅ Health checks y logging centralizado
-- ✅ Variables de entorno con `.env.template`
+### 📚 Servicios Adicionales
+- 🔄 **RAG Service**: Estructura base para chat inteligente
+- 🔄 **Vector Store**: ChromaDB para búsqueda semántica
 
 ## 🏗️ Arquitectura
 
@@ -284,208 +264,208 @@ npm install
 npm run dev
 ```
 
-## 📖 Guía de Uso
+## 📖 ETL y Feature Engineering
 
-### 1. Entrenar el Modelo (Primera Vez)
-
-```bash
-# Generar datos sintéticos y entrenar
-make train
-
-# O con tus propios datos
-python ml/model_training.py --data data/raw/transactions.csv --output ml/models
-```
-
-El entrenamiento genera:
-- `ml/models/isolation_forest.joblib`
-- `ml/models/lof.joblib`
-- `ml/models/feature_engineer.joblib`
-- `ml/models/training_metadata.json`
-
-### 2. Ingestar Datos
+### 1. Procesar Datos SNR/IGAC
 
 ```bash
-# Procesar archivo de datos
-make ingest
+# Procesar dataset completo (30.9M registros)
+python etl/clean_and_transform.py
 
-# O manualmente
-python data/ingest.py --input data/raw/transactions.csv --output data/processed/
+# O con número específico de registros
+python etl/clean_and_transform.py 5000000
 ```
 
-Formatos soportados:
-- CSV (UTF-8)
-- Parquet (Apache Arrow)
+**Salidas generadas** (en `data/clean/`):
+- `completo.parquet` - Todos los registros procesados
+- `limpio.parquet` - Solo registros con calidad OK
+- `ml_training.parquet` - Registros listos para ML (5.7M)
+- `mercado.parquet` - Solo transacciones de mercado
+- `errores.parquet` - Registros con problemas de calidad
+- `advertencias.parquet` - Registros con advertencias
 
-Columnas requeridas:
-- `valor_acto`, `tipo_acto`, `fecha_acto`
-- `departamento`, `municipio`, `tipo_predio`
-- `numero_intervinientes`, `estado_folio`
+**Estadísticas generadas**:
+- Por departamento y municipio
+- Por calidad de datos
+- Flags de anomalías
 
-### 3. Usar la Aplicación Web
-
-#### a) Mapa Interactivo (`/map`)
-
-- Visualiza transacciones por municipio
-- Colores indican nivel de riesgo
-- Click en puntos para ver detalles
-- Heatmap de actividad transaccional
-
-#### b) Analizador de Transacciones (`/analyzer`)
-
-**Análisis Individual:**
-1. Completa el formulario con datos de la transacción
-2. Click en "Analizar Transacción"
-3. Revisa el score de anomalía y recomendaciones
-
-**Análisis por Lote:**
-1. Carga archivo CSV o Parquet
-2. El sistema procesa en chunks
-3. Obtén estadísticas agregadas y lista de alto riesgo
-
-#### c) Chat Inteligente (`/chat`)
-
-- Haz preguntas en lenguaje natural
-- "¿Cuál es el valor promedio en Bogotá?"
-- "Muestra transacciones de alto riesgo"
-- "¿Qué municipios tienen más anomalías?"
-
-## 🔌 API Endpoints
-
-### Transacciones
-
-```http
-POST /api/transactions/analyze-transaction
-Content-Type: application/json
-
-{
-  "valor_acto": 250000000,
-  "tipo_acto": "compraventa",
-  "fecha_acto": "2024-01-15T10:30:00",
-  "departamento": "CUNDINAMARCA",
-  "municipio": "BOGOTA",
-  "tipo_predio": "urbano",
-  "numero_intervinientes": 2,
-  "estado_folio": "activo"
-}
-```
-
-**Respuesta:**
-```json
-{
-  "result": {
-    "anomaly_score": 0.15,
-    "classification": "normal",
-    "contributing_features": [...],
-    "confidence": 0.92,
-    "explanation": "Transacción normal...",
-    "recommendations": [...]
-  },
-  "processing_time_ms": 45.2
-}
-```
-
-### Análisis por Lote
-
-```http
-POST /api/transactions/batch-analyze
-Content-Type: multipart/form-data
-
-file: transactions.csv
-analyze_all: true
-```
-
-### Mapa
-
-```http
-GET /api/map/transactions?departamento=CUNDINAMARCA&limit=1000
-```
-
-Retorna GeoJSON con:
-- Coordenadas de municipios
-- Estadísticas agregadas
-- Métricas de riesgo
-
-### Chat
-
-```http
-POST /api/chat/query
-Content-Type: application/json
-
-{
-  "question": "¿Cuál es el valor promedio de transacciones en Bogotá?",
-  "top_k": 5
-}
-```
-
-### Health Check
-
-```http
-GET /health
-```
-
-## 🧠 Entrenamiento del Modelo
-
-### Pipeline de Entrenamiento
-
-1. **Feature Engineering**: Crea 34+ features desde datos raw
-   - Temporales (año, mes, día de la semana)
-   - Derivadas (valor/m², ratios, etc.)
-   - Categóricas encodificadas
-   - Indicadores de datos faltantes
-
-2. **Model Training**: Ensemble de algoritmos
-   - Isolation Forest (contamination=0.1)
-   - Local Outlier Factor (n_neighbors=20)
-   - Voting ensemble para clasificación final
-
-3. **Evaluation**: Métricas en test set
-   - Anomaly count por modelo
-   - Feature importance
-   - Confusion matrix
-
-### Comandos de Entrenamiento
+### 2. Generar Features para ML
 
 ```bash
-# Training con datos sintéticos (testing)
-python ml/model_training.py
-
-# Training con datos reales
-python ml/model_training.py \
-  --data data/processed/transactions.parquet \
-  --output ml/models
-
-# Ver metadata del entrenamiento
-cat ml/models/training_metadata.json
+python ml/feature_engineering_propsafe.py \
+  --input data/clean/ml_training.parquet \
+  --output data/clean/ml_features.parquet
 ```
 
-### Hiperparámetros
+**Features generadas (39 total)**:
+- 6 features temporales (año, mes, trimestre, día de semana)
+- 7 features de valor (log, millones, categorías)
+- 8 features de áreas (aunque no disponibles en datos actuales)
+- 3 features de actividad (anotaciones por año)
+- 3 features geográficas (urbano/rural)
+- 3 features de tipo de predio
+- 4 features de flags de anomalía
+- 2 features de naturaleza jurídica
+- 3 features de counts
 
-Edita `ml/model_training.py`:
+### 3. Entrenar Modelo ML
 
-```python
-isolation_forest = IsolationForest(
-    contamination=0.1,      # % esperado de anomalías
-    n_estimators=100,       # Número de árboles
-    max_samples='auto',     # Samples por árbol
-    random_state=42
-)
+```bash
+# Con dataset completo (5.7M registros)
+python ml/train_propsafe.py \
+  --features data/clean/ml_features.parquet \
+  --contamination 0.15
 
-lof = LocalOutlierFactor(
-    n_neighbors=20,         # Vecinos para LOF
-    contamination=0.1,
-    novelty=True
-)
+# Con muestra para pruebas
+python ml/train_propsafe.py \
+  --features data/clean/ml_features.parquet \
+  --sample 100000 \
+  --contamination 0.15
 ```
 
-### Interpretación de Scores
+**Modelos generados** (en `ml/models/`):
+- `propsafe_anomaly_model.joblib` - Modelo completo (Isolation Forest + LOF)
+- `training_predictions.parquet` - Predicciones en datos de entrenamiento
 
-- **Score < 0.4**: Normal ✅
-- **Score 0.4-0.7**: Sospechoso ⚠️
-- **Score > 0.7**: Alto Riesgo 🚨
+**Estadísticas esperadas**:
+- ~45% Normal (score < 0.4)
+- ~50% Sospechoso (score 0.4-0.7)  
+- ~5% Alto Riesgo (score > 0.7)
 
-## 🚢 Despliegue
+## 🚀 Despliegue en AWS
 
-### Docker Production
+### Docker Production (Local o EC2)
+
+```bash
+# Build para producción
+docker-compose -f docker-compose.prod.yml build
+
+# Deploy
+docker-compose -f docker-compose.prod.yml up -d
+
+# Ver logs
+docker-compose -f docker-compose.prod.yml logs -f
+
+# Detener
+docker-compose -f docker-compose.prod.yml down
+```
+
+### Variables de Producción
+
+```env
+# .env.production
+API_WORKERS=2
+LOG_LEVEL=INFO
+CORS_ORIGINS=["https://propsafeai.ibacrea.com"]
+
+# Security
+SECRET_KEY=<generar-key-segura>
+
+# Database
+DATABASE_URL=postgresql://propsafe_user:password@postgres:5432/propsafe_db
+
+# Model path
+MODEL_PATH=./ml/models/propsafe_anomaly_model.joblib
+```
+
+### Opción 1: Deployment Automatizado (Recomendado)
+
+```powershell
+# Desde el directorio del proyecto
+cd infra
+.\deploy-quick.ps1
+```
+
+Este script automatizado:
+1. Genera clave SSH si no existe
+2. Inicializa Terraform
+3. Provisiona EC2 t3.small (~$20/mes)
+4. Espera que la instancia esté lista
+5. Sube código y datos
+6. Despliega la aplicación con Docker
+7. Carga datos en PostgreSQL
+
+### Opción 2: Deployment Manual
+
+Ver guía completa en: [`infra/DEPLOYMENT.md`](infra/DEPLOYMENT.md)
+
+**Pasos resumidos:**
+
+1. **Generar clave SSH**:
+```powershell
+ssh-keygen -t ed25519 -f ~/.ssh/propsafe_key
+```
+
+2. **Provisionar infraestructura**:
+```powershell
+cd infra/terraform
+terraform init
+terraform apply
+```
+
+3. **Subir archivos**:
+```powershell
+scp -i ~/.ssh/propsafe_key -r backend frontend ml scripts docker-compose.prod.yml ubuntu@SERVER_IP:/opt/propsafe/
+```
+
+4. **Desplegar en servidor**:
+```bash
+ssh -i ~/.ssh/propsafe_key ubuntu@SERVER_IP
+cd /opt/propsafe
+./infra/scripts/deploy.sh
+```
+
+5. **Configurar DNS**:
+Apuntar `propsafeai.ibacrea.com` a la IP pública del EC2
+
+### Configuración de Producción
+
+**Recursos de EC2 t3.small**:
+- 2 vCPU
+- 2 GB RAM
+- 30 GB SSD
+- Costo: ~$15-20/mes
+
+**Servicios Docker**:
+- PostgreSQL (256MB shared_buffers)
+- Backend API (800MB limit, 2 workers)
+- Frontend Nginx (200MB limit)
+
+**Límites recomendados para no exceder recursos**:
+- Max 50 conexiones simultáneas a DB
+- Chunk size 10,000 registros para inferencia
+- 2 workers Gunicorn en backend
+
+## 📊 Estado del Proyecto
+
+### ✅ Completado
+
+- [x] ETL Pipeline (30.9M → 5.7M registros procesados)
+- [x] Feature Engineering (39 features)
+- [x] Model Training (Isolation Forest + LOF)
+- [x] Scripts de deployment (Terraform + Docker)
+- [x] PostgreSQL schema y data loading
+- [x] Documentación completa
+- [x] Código en GitHub: https://github.com/IBACREA/PropSafe-AI
+
+### 🔄 En Desarrollo
+
+- [ ] Backend API funcional con endpoints
+- [ ] Frontend React con dashboard
+- [ ] Integración ML model → API → Frontend
+- [ ] RAG Service para chat inteligente
+- [ ] Tests automatizados
+
+### 📋 Pendiente
+
+- [ ] Deployment en AWS EC2
+- [ ] Configuración DNS propsafeai.ibacrea.com
+- [ ] HTTPS con Let's Encrypt
+- [ ] CI/CD con GitHub Actions
+- [ ] Monitoreo con CloudWatch
+- [ ] Backups automatizados
+
+## 🔮 Roadmap
 
 ```bash
 # Build para producción
@@ -526,62 +506,61 @@ curl http://localhost:8000/health
 curl http://localhost:8001/api/v1/heartbeat
 ```
 
-## 🔮 Expansión Futura
+## 🔮 Roadmap
 
-### Hooks Implementados (Stubs)
+### Próximas Implementaciones
 
-El proyecto incluye placeholders para integraciones futuras:
+**Fase 1: Integración Backend → Frontend** (En desarrollo)
+- [ ] Conectar modelo entrenado con API FastAPI
+- [ ] Implementar endpoints funcionales
+- [ ] Crear dashboard React con visualizaciones
+- [ ] Integrar mapa Mapbox con datos reales
 
-#### 1. Lookup Catastral (`/api/cadastral/lookup`)
+**Fase 2: RAG Service** (Planeado)
+- [ ] Implementar ChromaDB con datos reales
+- [ ] Configurar OpenAI/embeddings
+- [ ] Chat inteligente funcional
 
-```python
-# Integración futura con IGAC
-# - Validar números catastrales
-# - Obtener datos oficiales de predios
-# - Verificar avalúos
-```
+**Fase 3: Integraciones Externas** (Futuro)
+- [ ] API de IGAC para validación catastral
+- [ ] Comparación con precios de mercado
+- [ ] Historial de folios de matrícula
 
-#### 2. Valuación de Mercado (`/api/market/valuation`)
+**Fase 4: Producción** (Q1 2025)
+- [ ] Deploy en AWS EC2
+- [ ] Configuración HTTPS
+- [ ] CI/CD con GitHub Actions
+- [ ] Monitoreo y alertas
 
-```python
-# Comparación con mercado
-# - Precios de referencia por zona
-# - Análisis comparativo de valor
-# - Índices de valorización
-```
+**Fase 5: Expansión** (2025)
+- [ ] Dashboard de administración
+- [ ] Alertas automáticas por email/SMS
+- [ ] Mobile app (React Native)
+- [ ] Predicción de precios con time series
 
-#### 3. Historial de Folio (`/api/folio/history`)
-
-```python
-# Trazabilidad completa
-# - Chain of title
-# - Transacciones previas
-# - Cambios de propietario
-```
-
-### Roadmap
-
-- [ ] **Q1 2025**: Integración con API de IGAC
-- [ ] **Q2 2025**: Dashboard de administración
-- [ ] **Q3 2025**: Alertas automáticas por email/SMS
-- [ ] **Q4 2025**: Mobile app (React Native)
-- [ ] **2026**: Predicción de precios con time series
-
-### Cómo Extender
+### Cómo Extender el Proyecto
 
 1. **Agregar un nuevo modelo ML**:
    ```python
    # ml/models/nuevo_modelo.py
    class NuevoDetector:
-       def predict(self, features):
-           # Tu lógica aquí
+       def fit(self, X, y):
+           # Entrenamiento
+           pass
+       
+       def predict(self, X):
+           # Predicción
            pass
    ```
 
 2. **Nuevo endpoint en API**:
    ```python
    # backend/api/nuevo_servicio.py
-   @router.get("/nuevo-endpoint")
+   from fastapi import APIRouter
+   
+   router = APIRouter(prefix="/api/nuevo")
+   
+   @router.get("/endpoint")
    async def nuevo_servicio():
        return {"status": "ok"}
    ```
@@ -596,24 +575,23 @@ El proyecto incluye placeholders para integraciones futuras:
 
 ## 🧪 Testing
 
+_(Tests automatizados aún no implementados)_
+
 ```bash
-# Backend tests
+# Backend tests (cuando se implementen)
 cd backend
 pytest tests/ -v --cov=.
 
 # Frontend tests (cuando se implementen)
 cd frontend
 npm test
-
-# Integration tests
-make test
 ```
 
 ## 📊 Monitoreo y Logs
 
-### Structured Logging
+### Structured Logging (Planeado)
 
-Todos los logs son JSON estructurado:
+Los logs serán JSON estructurado para fácil análisis:
 
 ```json
 {
@@ -626,19 +604,9 @@ Todos los logs son JSON estructurado:
 }
 ```
 
-### Ver Logs
-
-```bash
-# Docker logs
-docker-compose logs -f backend
-
-# Logs locales
-tail -f logs/app.log
-```
-
 ## 🤝 Contribuir
 
-1. Fork el repositorio
+1. Fork el repositorio en https://github.com/IBACREA/PropSafe-AI
 2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
 3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
@@ -646,21 +614,8 @@ tail -f logs/app.log
 
 ## 📄 Licencia
 
-Este proyecto es privado y propietario. Todos los derechos reservados.
-
-## 📞 Soporte
-
-Para preguntas o soporte:
-- 📧 Email: support@realestate-risk.com
-- 📖 Docs: http://localhost:8000/docs
-- 🐛 Issues: GitHub Issues
-
-## 🙏 Agradecimientos
-
-- Datos de prueba basados en estructura de SNR Colombia
-- Stack tecnológico: FastAPI, React, Scikit-learn, ChromaDB, Mapbox
-- Inspirado en mejores prácticas de MLOps y DevOps
+Este proyecto es privado y propietario de IBACREA. Todos los derechos reservados.
 
 ---
 
-**¡Gracias por usar Real Estate Risk Platform!** 🏠🔍
+**PropSafe AI** - Plataforma de Detección de Fraude en Transacciones Inmobiliarias de Colombia 🏠🔍
