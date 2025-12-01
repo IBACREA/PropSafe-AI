@@ -1,0 +1,91 @@
+{
+  "feature_names": [
+    "municipio_encoded",
+    "departamento_encoded",
+    "tipo_predio_encoded",
+    "nombre_natujur_encoded",
+    "estado_folio_encoded",
+    "count_a",
+    "count_de",
+    "total_intervinientes",
+    "predios_nuevos",
+    "dinamica_inmobiliaria",
+    "año",
+    "mes",
+    "trimestre",
+    "categoria_ruralidad_encoded"
+  ],
+  "stats": {
+    "total_samples": 94101,
+    "mean_price": 263755059.41700938,
+    "median_price": 240337000.0,
+    "min_price": 43809000.0,
+    "max_price": 709852500.0,
+    "std_price": 135242653.52174997,
+    "train_mae": 84659243.93210143,
+    "test_mae": 91634284.15142722,
+    "train_r2": 0.40082368827110504,
+    "test_r2": 0.3016800723050531,
+    "test_rmse": 112720059.18907472,
+    "feature_importance": [
+      {
+        "feature": "categoria_ruralidad_encoded",
+        "importance": 0.29629000886073126
+      },
+      {
+        "feature": "tipo_predio_encoded",
+        "importance": 0.22404211489052106
+      },
+      {
+        "feature": "departamento_encoded",
+        "importance": 0.2172021845552774
+      },
+      {
+        "feature": "mes",
+        "importance": 0.06675666337511947
+      },
+      {
+        "feature": "nombre_natujur_encoded",
+        "importance": 0.05239479388176887
+      },
+      {
+        "feature": "total_intervinientes",
+        "importance": 0.03425435744916512
+      },
+      {
+        "feature": "count_de",
+        "importance": 0.02735681083217896
+      },
+      {
+        "feature": "municipio_encoded",
+        "importance": 0.024446526468283963
+      },
+      {
+        "feature": "count_a",
+        "importance": 0.022536867087023398
+      },
+      {
+        "feature": "estado_folio_encoded",
+        "importance": 0.013519573826306655
+      },
+      {
+        "feature": "trimestre",
+        "importance": 0.01119995808681887
+      },
+      {
+        "feature": "predios_nuevos",
+        "importance": 0.010000140686804914
+      },
+      {
+        "feature": "dinamica_inmobiliaria",
+        "importance": 0.0
+      },
+      {
+        "feature": "año",
+        "importance": 0.0
+      }
+    ]
+  },
+  "model_type": "RandomForestRegressor",
+  "n_estimators": 100
+}

@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: propsafe-db
+    environment:
+      POSTGRES_DB: propsafe_db
+      POSTGRES_USER: propsafe_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_in_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    shm_size: 128mb
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c effective_cache_size=512MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=2MB
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+      -c max_connections=50
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: propsafe-backend
+    environment:
+      DATABASE_URL: postgresql://propsafe_user:${DB_PASSWORD:-change_in_production}@postgres:5432/propsafe_db
+      MODEL_PATH: /app/models
+      DATA_PATH: /app/data
+      LOG_LEVEL: INFO
+      WORKERS: 2
+    volumes:
+      - ./ml/models:/app/models:ro
+      - ./data/clean:/app/data:ro
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    mem_limit: 800m
+    cpus: 1.0
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: propsafe-frontend
+    environment:
+      VITE_API_URL: http://${SERVER_IP}:8000
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    mem_limit: 200m
+    cpus: 0.5
+
+volumes:
+  postgres_data:

@@ -1,0 +1,109 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytype/
+cython_debug/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+
+# Data files - CRITICAL: DO NOT UPLOAD LARGE FILES
+data/**/*.csv
+data/**/*.parquet
+data/**/*.xlsx
+data/raw/**
+data/processed/**
+data/clean/**
+*.parquet
+*.csv
+!data/.gitkeep
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/clean/.gitkeep
+
+# Models - CRITICAL: DO NOT UPLOAD TRAINED MODELS
+ml/models/**/*.pkl
+ml/models/**/*.joblib
+ml/models/**/*.h5
+ml/models/**/*.pt
+ml/models/**/*.pth
+ml/models/**/*.onnx
+*.pkl
+*.joblib
+*.h5
+!ml/models/.gitkeep
+
+# Vector store
+vector_store/
+chroma_data/
+
+# Logs
+logs/
+*.log
+
+# Docker
+.docker/
+
+# OS
+Thumbs.db
